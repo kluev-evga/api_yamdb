@@ -1,0 +1,70 @@
+Table category {
+  id AutoField [pk]
+  name CharField [note: 'max_length=25']
+  slug SlugField [note: 'unique=True']
+}
+
+Table comments {
+  id AutoField [pk]
+  review_id ForeignKey [ref: > review.id, note: 'on-delete:CASCADE, related_name=comments']
+  text TextField
+  author ForeignKey [ref: > users.id, note: 'on-delete:CASCADE, related_name=comments']
+  pub_date DateTimeField [note: 'auto_now_add=True']
+}
+
+Table genre {
+  id AutoField [pk]
+  name CharField [note: 'max_length=25']
+  slug SlugField [note: 'unique=True']
+}
+
+Table genre_title {
+  id AutoField [pk]
+  title_id ForeignKey [ref: > titles.id, note: 'on-delete: DO_NOTHING,  related_name=titles, UniqueConstraint: genre-id']
+  genre_id ForeignKey [ref: > genre.id, note: 'on-delete: DO_NOTHING,   related_name=genres, UniqueConstraint: title-id']
+}
+
+Table review {
+  id AutoField [pk]
+  title_id ForeignKey [ref: > titles.id, note: 'on-delete:CASCADE']
+  text TextField
+  author ForeignKey [ref: > users.id, note: 'on-delete:CASCADE']
+  score CHOICES [note: 'PositiveSmallIntegerField(choices=CHOICES)']
+  pub_date DateTimeField [note: 'auto_now_add=True']
+}
+
+Table titles {
+  id AutoField [pk]
+  name CharField [note: 'max_length=25']
+  year PositiveSmallIntegerField
+  category ForeignKey [ref: > category.id, note: 'on-delete: DO_NOTHING']
+}
+
+Table users {
+  id AutoField [pk]
+  username CharField [note: 'max_length=25, unique=True']
+  email EmailField [note: 'max_length=255']
+  role role
+  bio CharField [note: 'max_length=255, null=True, blank=True']
+  first_name CharField [note: 'max_length=25, null=True, blank=True']
+  last_name CharField [note: 'max_length=25, null=True, blank=True']
+}
+
+enum role {
+  user
+  admin
+  moderator
+}
+
+enum CHOICES {
+  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+  10
+}
