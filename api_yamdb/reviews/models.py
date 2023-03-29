@@ -19,6 +19,24 @@ class Categories(models.Model):
         return self.name[:25]
 
 
+class Genres(models.Model):
+    name = models.CharField(
+        max_length=256,
+        verbose_name='Название жанра',
+    )
+    slug = models.SlugField(
+        unique=True,
+        max_length=50,
+    )
+
+    class Meta:
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
+
+    def __str__(self):
+        return self.name[:25]
+
+
 class Titles(models.Model):
     name = models.CharField(
         max_length=256,
@@ -37,6 +55,10 @@ class Titles(models.Model):
         on_delete=models.DO_NOTHING,
         related_name='category',
         verbose_name='Категория',
+    )
+    genre = models.ManyToManyField(
+        Genres,
+        through='GenreTitle',
     )
 
     class Meta:
@@ -93,3 +115,17 @@ class Reviews(models.Model):
 
     def __str__(self):
         return self.text[:25]
+
+
+class GenreTitle(models.Model):
+    genre = models.ForeignKey(
+        Genres,
+        on_delete=models.DO_NOTHING,
+    )
+    title = models.ForeignKey(
+        Titles,
+        on_delete=models.DO_NOTHING,
+    )
+
+    def __str__(self):
+        return f'{self.genre} {self.title}'
