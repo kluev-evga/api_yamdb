@@ -35,5 +35,9 @@ class Titles(models.Model):
         verbose_name='Категория',
     )
 
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'категории'
+
     def __str__(self):
         return self.name
