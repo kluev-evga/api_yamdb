@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
@@ -45,6 +46,33 @@ class Titles(models.Model):
 
     def __str__(self):
         return self.name[:25]
+
+
+ROLES = [
+    ('user', 'user'),
+    ('moderator', 'moderator'),
+    ('admin', 'admin'),
+]
+
+
+class User(AbstractUser):
+    bio = models.TextField(
+        'биография',
+    )
+    role = models.CharField(
+        'роль пользователя',
+        max_length=50,
+        choices=ROLES,
+    )
+
+    class Meta:
+        db_table = "auth_user"
+
+    def save(self, *args, **kwargs):
+        """Установить роль при создании superuser"""
+        if self.is_superuser:
+            self.role = 'moderator'
+        super().save(*args, **kwargs)
 
 
 SCORE = [
