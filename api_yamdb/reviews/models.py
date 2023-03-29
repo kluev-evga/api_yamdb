@@ -3,8 +3,8 @@ from django.db import models
 
 class Categories(models.Model):
     name = models.CharField(
+        'Имя категории',
         max_length=256,
-        verbose_name='Имя категории',
     )
     slug = models.SlugField(
         unique=True,
@@ -21,8 +21,8 @@ class Categories(models.Model):
 
 class Genres(models.Model):
     name = models.CharField(
+        'Название жанра',
         max_length=256,
-        verbose_name='Название жанра',
     )
     slug = models.SlugField(
         unique=True,
@@ -39,16 +39,16 @@ class Genres(models.Model):
 
 class Titles(models.Model):
     name = models.CharField(
+        'Название произведения',
         max_length=256,
-        verbose_name='Название',
     )
     year = models.PositiveSmallIntegerField(
-        verbose_name='Год выпуска',
+        'Год выпуска',
     )
     description = models.TextField(
+        'Описание',
         blank=True,
         null=True,
-        verbose_name='Описание',
     )
     category = models.ForeignKey(
         Categories,
@@ -121,10 +121,14 @@ class GenreTitle(models.Model):
     genre = models.ForeignKey(
         Genres,
         on_delete=models.DO_NOTHING,
+        verbose_name='Название жанра',
+        related_name='genres'
     )
     title = models.ForeignKey(
         Titles,
         on_delete=models.DO_NOTHING,
+        verbose_name='Название произведения',
+        related_name='titles'
     )
 
     def __str__(self):
