@@ -11,6 +11,10 @@ class Categories(models.Model):
         max_length=50,
     )
 
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+
     def __str__(self):
         return self.name
 
@@ -34,6 +38,10 @@ class Titles(models.Model):
         related_name='category',
         verbose_name='Категория',
     )
+
+    class Meta:
+        verbose_name = 'Произведение'
+        verbose_name_plural = 'Произведения'
 
     def __str__(self):
         return self.name
