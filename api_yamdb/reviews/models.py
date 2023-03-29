@@ -2,10 +2,9 @@ from django.db import models
 
 
 SCORE = [
-    ('1', '1'), ('2', '2'), ('3', '3'),
-    ('4', '4'), ('5', '5'), ('6', '6'),
-    ('7', '7'), ('8', '8'), ('9', '9'), ('10', '10')
-
+    ('1', 1), ('2', 2), ('3', 3),
+    ('4', 4), ('5', 5), ('6', 6),
+    ('7', 7), ('8', 8), ('9', 9), ('10', 10)
 ]
 
 
@@ -38,7 +37,7 @@ class Reviews(models.Model):
     class Meta:
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
-        ordering = ['pub_date']
+        ordering = ('pub_date',)
         constraints = [
             models.UniqueConstraint(
                 fields=['title', 'author'],
@@ -47,4 +46,4 @@ class Reviews(models.Model):
         ]
 
     def __str__(self):
-        return self.text
+        return self.text[:25]
