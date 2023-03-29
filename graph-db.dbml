@@ -1,7 +1,7 @@
 Table category {
   id AutoField [pk]
-  name CharField [note: 'max_length=25']
-  slug SlugField [note: 'unique=True']
+  name CharField [note: 'max_length=256']
+  slug SlugField [note: 'unique=True, max_length=50']
 }
 
 Table comments {
@@ -14,8 +14,8 @@ Table comments {
 
 Table genre {
   id AutoField [pk]
-  name CharField [note: 'max_length=25']
-  slug SlugField [note: 'unique=True']
+  name CharField [note: 'max_length=256']
+  slug SlugField [note: 'unique=True, max_length=50']
 }
 
 Table genre_title {
@@ -35,19 +35,20 @@ Table review {
 
 Table titles {
   id AutoField [pk]
-  name CharField [note: 'max_length=25']
+  name CharField [note: 'max_length=256']
   year PositiveSmallIntegerField
+  description TextField
   category ForeignKey [ref: > category.id, note: 'on-delete: DO_NOTHING']
 }
 
 Table users {
   id AutoField [pk]
-  username CharField [note: 'max_length=25, unique=True']
-  email EmailField [note: 'max_length=255']
+  username CharField [note: 'max_length=150, unique=True']
+  email EmailField [note: 'max_length=254']
   role role
-  bio CharField [note: 'max_length=255, null=True, blank=True']
-  first_name CharField [note: 'max_length=25, null=True, blank=True']
-  last_name CharField [note: 'max_length=25, null=True, blank=True']
+  bio TextField
+  first_name CharField [note: 'max_length=150, null=True, blank=True']
+  last_name CharField [note: 'max_length=150, null=True, blank=True']
 }
 
 enum role {
