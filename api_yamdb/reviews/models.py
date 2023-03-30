@@ -3,8 +3,8 @@ from django.db import models
 
 class Categories(models.Model):
     name = models.CharField(
+        'Имя категории',
         max_length=256,
-        verbose_name='Имя категории',
     )
     slug = models.SlugField(
         unique=True,
@@ -19,24 +19,46 @@ class Categories(models.Model):
         return self.name[:25]
 
 
+class Genres(models.Model):
+    name = models.CharField(
+        'Название жанра',
+        max_length=256,
+    )
+    slug = models.SlugField(
+        unique=True,
+        max_length=50,
+    )
+
+    class Meta:
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
+
+    def __str__(self):
+        return self.name[:25]
+
+
 class Titles(models.Model):
     name = models.CharField(
+        'Название произведения',
         max_length=256,
-        verbose_name='Название',
     )
     year = models.PositiveSmallIntegerField(
-        verbose_name='Год выпуска',
+        'Год выпуска',
     )
     description = models.TextField(
+        'Описание',
         blank=True,
         null=True,
-        verbose_name='Описание',
     )
     category = models.ForeignKey(
         Categories,
         on_delete=models.DO_NOTHING,
         related_name='category',
         verbose_name='Категория',
+    )
+    genre = models.ManyToManyField(
+        Genres,
+        through='GenreTitle',
     )
 
     class Meta:
@@ -93,3 +115,21 @@ class Reviews(models.Model):
 
     def __str__(self):
         return self.text[:25]
+
+
+class GenreTitle(models.Model):
+    genre = models.ForeignKey(
+        Genres,
+        on_delete=models.DO_NOTHING,
+        verbose_name='Название жанра',
+        related_name='genres'
+    )
+    title = models.ForeignKey(
+        Titles,
+        on_delete=models.DO_NOTHING,
+        verbose_name='Название произведения',
+        related_name='titles'
+    )
+
+    def __str__(self):
+        return f'{self.genre} {self.title}'
