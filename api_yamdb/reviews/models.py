@@ -163,7 +163,7 @@ class GenreTitle(models.Model):
         return f'{self.genre} {self.title}'
 
 
-class Comment(models.Model):
+class Comments(models.Model):
     review = models.ForeignKey(
         Reviews,
         verbose_name='Отзыв',
@@ -188,7 +188,7 @@ class Comment(models.Model):
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
-        ordering = ('pub_date')
+        ordering = ('pub_date',)
 
     def __str__(self):
-        return self.text
+        return self.text[:25]
