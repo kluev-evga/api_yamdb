@@ -22,11 +22,13 @@ class SignupView(APIView):
         serializer.save()
 
         # Генерация кода и отправка email:
-        user = User.objects.get(username=request.data['username'])
+        username = request.data['username']
+        user = User.objects.get(username=username)
         confirmation_code = default_token_generator.make_token(user)
         send_mail(
             'Код для получения токена:',
-            f'{"-" * 79}\n\nКод подтверждения:\n\n{confirmation_code}\n',
+            (f'{"-" * 79}\n\nusername:\n{username}\n\n'
+             f'Код подтверждения:\n{confirmation_code}\n'),
             'from@example.com',
             ['to@example.com'],
             fail_silently=False,
