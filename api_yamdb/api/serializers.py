@@ -29,7 +29,9 @@ class AuthSerializer(serializers.Serializer):
         # Проверка confirmation_code:
         valid = default_token_generator.check_token(user, confirmation_code)
         if not valid:
-            raise serializers.ValidationError('Некорректный токен')
+            raise serializers.ValidationError(
+                'Некорректный код подтверждения и/или username'
+            )
 
         return user  # вернул user чтобы получить его в to_representation()
 
