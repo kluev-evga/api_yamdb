@@ -1,17 +1,27 @@
+from api.permissions import AdminOrReadOnly
+from api.serializers import (
+    AuthSerializer,
+    CategoriesSerializer,
+    SignupSerializer
+)
+
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 
-from rest_framework import status
+from rest_framework import filters, mixins, status
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from reviews.models import Categories, Comments, Genres, Reviews, Titles, User
-from reviews.serializers import (
-    AuthSerializer,
-    SignupSerializer,
-)
+
+
+class GetListCreateDeleteViewSet(
+    mixins.ListModelMixin, mixins.CreateModelMixin,
+    mixins.DestroyModelMixin, GenericViewSet
+):
+    pass
 
 
 class SignupView(APIView):
@@ -54,6 +64,15 @@ class AuthView(APIView):
         serializer.is_valid(raise_exception=True)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class CategoriesViewSet(GetListCreateDeleteViewSet):
+    serializer_class = CategoriesSerializer
+    queryset = Categories.objects.all()
+    permission_classes = AdminOrReadOnly
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
 
 
 class UsersViewSet(ModelViewSet):
