@@ -24,7 +24,8 @@ DATA_PATH = 'static/data/'
 
 
 class Command(BaseCommand):
-    help = ('imports data from a local csv file. '
+    help = ('Imports data from a local csv file if there is flag --filename '
+            'or all files if there is not. '
             'Expects files named category.csv, comments.csv, '
             'genre.csv, genre_title.csv, review.csv, titles.csv, users.csv')
 
@@ -65,11 +66,47 @@ class Command(BaseCommand):
                 return True
         return False
 
+    def _save_row_to_database(self, row):
+        form = FILENAME_MODEL_DICT[self.filename](data=row)
+        if form.is_valid():
+            form.save()
+            self.imported_counter += 1
+            return form
+        return form
+
+    def _stdout_error(self, form, row):
+        self.skipped_counter += 1
+        self.stderr.write(
+            f'{"_" * 120}\nErrors while import {self.file_path} | {row}:\n'
+        )
+        self.stderr.write(f'{form.errors.as_data()}\n')
+
+    def _import_csv(self):
+        with open(self.file_path, mode='r') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                form = self._save_row_to_database(row=row)
+                if form.errors:
+                    self._stdout_error(form=form, row=row)
+
+    def prepare(self):
+        self.imported_counter = 0
+        self.skipped_counter = 0
+
+    def main(self):
+        self.stdout.write(f'{"_" * 120}\nStarting import {self.filename}')
+        self._import_csv()
+
+    def finalise(self):
+        self.stdout.write(f'Import {self.filename} ends\n'
+                          f'Instances imported: {self.imported_counter}\n'
+                          f'Instances skipped: {self.skipped_counter}\n')
+
     def handle(self, *args, **kwargs):
         if self._choice_of_particular(**kwargs):
             self.prepare()
             self.file_path = DATA_PATH + self.filename
-            self.main_for_particular()
+            self.main()
             self.finalise()
 
         else:
@@ -77,36 +114,5 @@ class Command(BaseCommand):
                 self.prepare()
                 self.filename = keys
                 self.file_path = DATA_PATH + self.filename
-                self.main_for_particular()
+                self.main()
                 self.finalise()
-
-    def prepare(self):
-        self.imported_counter = 0
-        self.skipped_counter = 0
-
-    def _import_csv(self):
-        with open(self.file_path, mode='r') as file:
-            reader = csv.DictReader(file)
-            for i, row in enumerate(reader):
-                form = FILENAME_MODEL_DICT[self.filename](data=row)
-                if form.is_valid():
-                    form.save()
-                    self.imported_counter += 1
-                else:
-                    self.skipped_counter += 1
-                    self.stderr.write('-------------------------------------\n'
-                                      f'Errors while import {self.file_path} |'
-                                      f' {row}:\n'
-                                      )
-                    self.stderr.write(f'{form.errors.as_data()}\n')
-
-    def main_for_particular(self):
-        self.stdout.write('------------------------------------'
-                          '------------------------------------\n'
-                          f'Starting import {self.filename}')
-        self._import_csv()
-
-    def finalise(self):
-        self.stdout.write(f'Import {self.filename} ends\n'
-                          f'Instances imported: {self.imported_counter}\n'
-                          f'Instances skipped: {self.skipped_counter}\n')
