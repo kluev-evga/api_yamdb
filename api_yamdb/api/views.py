@@ -70,7 +70,7 @@ class AuthView(APIView):
 class CategoriesViewSet(GetListCreateDeleteViewSet):
     serializer_class = CategoriesSerializer
     queryset = Categories.objects.all()
-    permission_classes = IsOwnerOrIsAdmin
+    permission_classes = (IsOwnerOrIsAdmin,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
@@ -79,7 +79,7 @@ class CategoriesViewSet(GetListCreateDeleteViewSet):
 class GenresViewSet(GetListCreateDeleteViewSet):
     serializer_class = GenresSerializer
     queryset = Genres.objects.all()
-    permission_classes = IsOwnerOrIsAdmin
+    permission_classes = (IsOwnerOrIsAdmin,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
