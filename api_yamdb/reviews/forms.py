@@ -1,5 +1,12 @@
 from django import forms
-from reviews.models import Categories, Comments, Genres, GenreTitle, Reviews, Titles, User
+
+from reviews.models import (Categories,
+                            Comments,
+                            GenreTitle,
+                            Genres,
+                            Reviews,
+                            Titles,
+                            User)
 
 
 class CategoriesForm(forms.ModelForm):
