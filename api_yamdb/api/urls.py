@@ -17,6 +17,6 @@ router.register('genres', GenresViewSet, basename='genres')
 
 urlpatterns = [
     path('api/v1/auth/signup/', SignupView.as_view(), name='signup'),
-    path('api/v1/auth/token', AuthView.as_view(), name='auth'),
+    path('api/v1/auth/token/', AuthView.as_view(), name='auth'),
     path('api/v1/', include(router.urls)),
 ]

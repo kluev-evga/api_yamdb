@@ -33,7 +33,7 @@ class SignupView(APIView):
 
         subject = 'Код для получения токена'
         body = (f'{"-" * 79}\n\nusername:\n{username}\n\n'
-                f'Код подтверждения:\n{confirmation_code}\n'),
+                f'Код подтверждения:\n{confirmation_code}\n')
         send_mail(
             subject,
             body,
