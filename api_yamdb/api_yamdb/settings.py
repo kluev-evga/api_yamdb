@@ -94,7 +94,7 @@ AUTH_USER_MODEL = 'reviews.User'
 # rest_framework
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'api.pagination.CursorCountPagination',
-    'PAGE_SIZE': 1,
+    'PAGE_SIZE': 2,
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
@@ -120,5 +120,5 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
     "SIGNING_KEY": SECRET_KEY,
-    "AUTH_HEADER_TYPES": ("token",),
+    "AUTH_HEADER_TYPES": ("Bearer",),
 }
