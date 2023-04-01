@@ -17,13 +17,17 @@ from .serializers import (
 class SignupView(APIView):
     def post(self, request):
         """Регистрация нового пользователя"""
-        serializer = SignupSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        username = request.data.get('username', None)
+        email = request.data.get('email', None)
+        user = User.objects.filter(username=username, email=email)
+
+        if len(user) == 0:
+            serializer = SignupSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
         # Генерация кода и отправка email:
-        username = request.data['username']
-        user = User.objects.get(username=username)
+        user = User.objects.get(username=username, email=email)
         confirmation_code = default_token_generator.make_token(user)
         send_mail(
             'Код для получения токена:',
@@ -34,7 +38,7 @@ class SignupView(APIView):
             fail_silently=False,
         )
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(request.data, status=status.HTTP_200_OK)
 
 
 class AuthView(APIView):
