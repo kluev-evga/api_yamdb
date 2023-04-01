@@ -2,7 +2,8 @@ from api.permissions import AdminOrReadOnly
 from api.serializers import (
     AuthSerializer,
     CategoriesSerializer,
-    SignupSerializer
+    GenresSerializer,
+    SignupSerializer,
 )
 
 from django.contrib.auth.tokens import default_token_generator
@@ -69,6 +70,15 @@ class AuthView(APIView):
 class CategoriesViewSet(GetListCreateDeleteViewSet):
     serializer_class = CategoriesSerializer
     queryset = Categories.objects.all()
+    permission_classes = AdminOrReadOnly
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+
+
+class GenresViewSet(GetListCreateDeleteViewSet):
+    serializer_class = GenresSerializer
+    queryset = Genres.objects.all()
     permission_classes = AdminOrReadOnly
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
