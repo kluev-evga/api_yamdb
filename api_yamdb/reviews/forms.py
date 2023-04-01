@@ -1,12 +1,14 @@
 from django import forms
 
-from reviews.models import (Categories,
-                            Comments,
-                            GenreTitle,
-                            Genres,
-                            Reviews,
-                            Titles,
-                            User)
+from reviews.models import (
+    Categories,
+    Comments,
+    GenreTitle,
+    Genres,
+    Reviews,
+    Titles,
+    User
+)
 
 
 class CategoriesForm(forms.ModelForm):
@@ -48,4 +50,4 @@ class TitlesForm(forms.ModelForm):
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['id', 'username', 'email', 'role', 'bio', 'first_name', 'last_name']
