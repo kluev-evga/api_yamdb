@@ -100,7 +100,8 @@ class User(AbstractUser):
     )
     bio = models.TextField(
         'биография',
-        default='',
+        blank=True,
+        null=True,
     )
     role = models.CharField(
         'роль пользователя',
