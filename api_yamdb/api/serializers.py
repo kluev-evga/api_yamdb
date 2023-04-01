@@ -51,4 +51,11 @@ class CategoriesSerializer(serializers.ModelSerializer):
     """Serializer for Categories endpoint"""
     class Meta:
         model = Categories
-        fields = ('name', 'slug',)
+        fields = ('name', 'slug')
+
+
+class TitlesSerializer(serializers.ModelSerializer):
+    """Serializer for Titles endpoint"""
+    class Meta:
+        model = Categories
+        fields = ('name', 'year', 'description', 'category')
