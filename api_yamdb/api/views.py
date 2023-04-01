@@ -1,16 +1,16 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 
+from rest_framework import status
 from rest_framework.permissions import IsAdminUser
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework.viewsets import ModelViewSet
 
-from reviews.models import User, Titles, Genres, Categories, Reviews, Comments
-from .serializers import (
-    SignupSerializer,
+from reviews.models import Categories, Comments, Genres, Reviews, Titles, User
+from reviews.serializers import (
     AuthSerializer,
+    SignupSerializer,
 )
 
 

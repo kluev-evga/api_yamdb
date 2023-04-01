@@ -1,14 +1,16 @@
-from django.urls import path, include
+from django.urls import include, path
+
 from rest_framework import routers
 
 from .views import (
-    UsersViewSet,
+    AuthView,
     SignupView,
-    AuthView
+    UsersViewSet
 )
 
 router = routers.DefaultRouter()
 router.register('users', UsersViewSet, basename='users')
+router.register('categories', CategoriesViewSet, basename='categories')
 
 urlpatterns = [
     path('api/v1/auth/signup/', SignupView.as_view(), name='signup'),
