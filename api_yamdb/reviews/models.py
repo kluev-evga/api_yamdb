@@ -1,4 +1,7 @@
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy
 from django.db import models
 
 
@@ -73,18 +76,43 @@ ROLES = [
 ]
 
 
+def validate_username(value):
+    if value == 'me':
+        raise ValidationError('Недопустимое имя пользователя - me')
+
+
 class User(AbstractUser):
+    username = models.CharField(
+        'username',
+        max_length=150,
+        unique=True,
+        help_text=gettext_lazy('Required. 150 characters or fewer.'
+                               ' Letters, digits and @/./+/-/_ only.'),
+        validators=[UnicodeUsernameValidator(), validate_username],
+        error_messages={
+            'unique': gettext_lazy(
+                "A user with that username already exists."),
+        },
+    )
+    email = models.EmailField(
+        'Email',
+        unique=True,
+    )
     bio = models.TextField(
         'биография',
+        default='',
     )
     role = models.CharField(
         'роль пользователя',
         max_length=50,
         choices=ROLES,
+        default='user'
     )
 
     class Meta:
         db_table = "auth_user"
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
     def save(self, *args, **kwargs):
         """Установить роль при создании superuser"""
