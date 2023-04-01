@@ -2,13 +2,15 @@ import csv
 
 from django.core.management.base import BaseCommand
 
-from reviews.forms import (CategoriesForm,
-                           CommentsForm,
-                           GenreTitleForm,
-                           GenresForm,
-                           ReviewsForm,
-                           TitlesForm,
-                           UserForm)
+from reviews.forms import (
+    CategoriesForm,
+    CommentsForm,
+    GenreTitleForm,
+    GenresForm,
+    ReviewsForm,
+    TitlesForm,
+    UserForm
+)
 
 
 FILENAME_MODEL_DICT = {
