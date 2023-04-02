@@ -1,7 +1,7 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 
-from rest_framework import validators, serializers
+from rest_framework import serializers
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -56,14 +56,6 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
 class GenresSerializer(serializers.ModelSerializer):
     """Serializer for Genres endpoint"""
-    slug = serializers.SlugField(
-        required=True,
-        max_length=50,
-        validators=[validators.UniqueValidator(
-            queryset=Genres.objects.all()
-        )]
-    )
-
     class Meta:
-        model = Categories
+        model = Genres
         fields = ('name', 'slug',)
