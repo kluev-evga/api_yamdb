@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from reviews.models import Categories, User
+from reviews.models import Categories, Genres, User
 
 JWT = TokenObtainPairSerializer()
 
@@ -59,3 +59,11 @@ class TitlesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categories
         fields = ('name', 'year', 'description', 'category')
+
+
+class GenresSerializer(serializers.ModelSerializer):
+    """Serializer for Genres endpoint"""
+    class Meta:
+        model = Genres
+        fields = ('name', 'slug',)
+

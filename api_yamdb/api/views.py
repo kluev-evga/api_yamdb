@@ -1,9 +1,10 @@
-from api.permissions import AdminOrReadOnly
+from api.permissions import IsOwnerOrIsAdmin
 from api.serializers import (
     AuthSerializer,
     CategoriesSerializer,
     SignupSerializer,
     TitlesSerializer,
+    GenresSerializer,
 )
 
 from django.contrib.auth.tokens import default_token_generator
@@ -33,7 +34,7 @@ class SignupView(APIView):
 
         subject = 'Код для получения токена'
         body = (f'{"-" * 79}\n\nusername:\n{username}\n\n'
-                f'Код подтверждения:\n{confirmation_code}\n'),
+                f'Код подтверждения:\n{confirmation_code}\n')
         send_mail(
             subject,
             body,
@@ -71,7 +72,16 @@ class CategoriesViewSet(GetListCreateDeleteViewSet):
     """ViewSet for Categories endpoint"""
     serializer_class = CategoriesSerializer
     queryset = Categories.objects.all()
-    permission_classes = AdminOrReadOnly
+    permission_classes = (IsOwnerOrIsAdmin,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+
+
+class GenresViewSet(GetListCreateDeleteViewSet):
+    serializer_class = GenresSerializer
+    queryset = Genres.objects.all()
+    permission_classes = (IsOwnerOrIsAdmin,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
@@ -81,7 +91,7 @@ class TitlesViewSet(ModelViewSet):
     """ViewSet for Titles endpoint"""
     serializer_class = TitlesSerializer
     queryset = Titles.objects.all()
-    permission_classes = AdminOrReadOnly
+    permission_classes = IsOwnerOrIsAdmin
     filter_backends = (filters.BaseFilterBackend,)  # TODO: фильтрация
 
 
