@@ -1,8 +1,11 @@
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
+
 from rest_framework import serializers
-from reviews.models import User
+
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+from reviews.models import Categories, Genres, User
 
 JWT = TokenObtainPairSerializer()
 
@@ -42,3 +45,17 @@ class SignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'email',)
+
+
+class CategoriesSerializer(serializers.ModelSerializer):
+    """Serializer for Categories endpoint"""
+    class Meta:
+        model = Categories
+        fields = ('name', 'slug',)
+
+
+class GenresSerializer(serializers.ModelSerializer):
+    """Serializer for Genres endpoint"""
+    class Meta:
+        model = Genres
+        fields = ('name', 'slug',)
