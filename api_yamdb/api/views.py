@@ -91,8 +91,8 @@ class TitlesViewSet(ModelViewSet):
     """ViewSet for Titles endpoint"""
     serializer_class = TitlesSerializer
     queryset = Titles.objects.all()
-    permission_classes = IsOwnerOrIsAdmin
-    filter_backends = (filters.BaseFilterBackend,)  # TODO: фильтрация
+    permission_classes = (IsOwnerOrIsAdmin,)
+    # TODO: фильтрация
 
 
 class UsersViewSet(ModelViewSet):

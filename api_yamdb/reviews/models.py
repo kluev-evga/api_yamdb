@@ -20,7 +20,7 @@ class Categories(models.Model):
         verbose_name_plural = 'Категории'
 
     def __str__(self):
-        return self.name[:25]
+        return self.slug
 
 
 class Genres(models.Model):
@@ -38,7 +38,7 @@ class Genres(models.Model):
         verbose_name_plural = 'Жанры'
 
     def __str__(self):
-        return self.name[:25]
+        return self.slug
 
 
 class Titles(models.Model):
@@ -185,7 +185,7 @@ class GenreTitle(models.Model):
     )
 
     def __str__(self):
-        return f'{self.genre} {self.title}'
+        return f'{self.genre}'
 
 
 class Comments(models.Model):
