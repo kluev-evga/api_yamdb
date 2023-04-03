@@ -11,6 +11,18 @@
 Проект реализует REST API backend сервис на базе встроенной в Python sqlite базы данных и DjangoResetFramework. В
 проекте подключена авторизация по JWT токенам.
 
+### Команда разработки:
+
+<a href='https://github.com/Siktorovich' title='Артём'>
+<img src="https://avatars.githubusercontent.com/u/107465356?v=4" width="100" alt="developer Артём">
+</a>
+<a href="https://github.com/lesinn1k" title='Никита'>
+<img src="https://avatars.githubusercontent.com/u/118612161?v=4" width="100" alt="developer Никита">
+</a>
+<a href='https://github.com/kluevEVGA' title='Евгений'>
+<img src="https://avatars.githubusercontent.com/u/97233323?v=4" width="100" alt="developer Евгений">
+</a>
+
 ## ЗАПУСК ПРОЕКТА
 
 <hr/>
