@@ -1,21 +1,32 @@
-from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import send_mail
-from django.shortcuts import get_object_or_404
-
-from rest_framework.permissions import IsAdminUser
-from .permissions import AdminModeratorOwnerOrReadOnly
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import status, viewsets
-
-from reviews.models import User, Titles, Genres, Categories, Reviews, Comments
-from .serializers import (
+from api.permissions import IsOwnerOrIsAdmin
+from api.serializers import (
+    CategoriesSerializer,
+    CommentsSerializer,
+    ReviewsSerializer,
+    GenresSerializer,
     SignupSerializer,
     AuthSerializer,
-    ReviewsSerializer,
-    CommentsSerializer,
 )
+
+from django.contrib.auth.tokens import default_token_generator
+from django.shortcuts import get_object_or_404
+from django.core.mail import send_mail
+
+from rest_framework import filters, mixins, status, viewsets
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
+
+from reviews.models import Categories, Comments, Genres, Reviews, Titles, User
+from .permissions import AdminModeratorOwnerOrReadOnly
+
+
+class GetListCreateDeleteViewSet(
+    mixins.ListModelMixin, mixins.CreateModelMixin,
+    mixins.DestroyModelMixin, GenericViewSet
+):
+    pass
 
 
 class SignupView(APIView):
@@ -26,7 +37,7 @@ class SignupView(APIView):
 
         subject = 'Код для получения токена'
         body = (f'{"-" * 79}\n\nusername:\n{username}\n\n'
-                f'Код подтверждения:\n{confirmation_code}\n'),
+                f'Код подтверждения:\n{confirmation_code}\n')
         send_mail(
             subject,
             body,
@@ -58,6 +69,24 @@ class AuthView(APIView):
         serializer.is_valid(raise_exception=True)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class CategoriesViewSet(GetListCreateDeleteViewSet):
+    serializer_class = CategoriesSerializer
+    queryset = Categories.objects.all()
+    permission_classes = (IsOwnerOrIsAdmin,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+
+
+class GenresViewSet(GetListCreateDeleteViewSet):
+    serializer_class = GenresSerializer
+    queryset = Genres.objects.all()
+    permission_classes = (IsOwnerOrIsAdmin,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
 
 
 class UsersViewSet(ModelViewSet):

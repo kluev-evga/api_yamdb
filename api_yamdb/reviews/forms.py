@@ -50,4 +50,6 @@ class TitlesForm(forms.ModelForm):
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'role', 'bio', 'first_name', 'last_name']
+        fields = [
+            'id', 'username', 'email', 'role', 'bio', 'first_name', 'last_name'
+        ]
