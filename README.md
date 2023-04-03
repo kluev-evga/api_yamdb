@@ -8,9 +8,20 @@
 
 ## О ПРОЕКТЕ
 
-
 Проект реализует REST API backend сервис на базе встроенной в Python sqlite базы данных и DjangoResetFramework. В
 проекте подключена авторизация по JWT токенам.
+
+### Команда разработки:
+
+<a href='https://github.com/Siktorovich' title='Артём'>
+<img src="https://avatars.githubusercontent.com/u/107465356?v=4" width="100" alt="developer Артём">
+</a>
+<a href="https://github.com/lesinn1k" title='Никита'>
+<img src="https://avatars.githubusercontent.com/u/118612161?v=4" width="100" alt="developer Никита">
+</a>
+<a href='https://github.com/kluevEVGA' title='Евгений'>
+<img src="https://avatars.githubusercontent.com/u/97233323?v=4" width="100" alt="developer Евгений">
+</a>
 
 ## ЗАПУСК ПРОЕКТА
 
@@ -139,6 +150,37 @@ dbdocs build graph-db.dbml
 ```
 
 Последний шаг выведет в консоль ссылку на задеплоенный проект.
+
+## Регистрация и авторизация
+
+```mermaid
+graph LR
+api/v1/auth/signup-->POST;
+POST-->user-exists?;
+user-exists?-->yes-->skip-->Email_confirmation_code;
+user-exists?-->no-->create-user-->Email_confirmation_code;
+```
+
+```json
+{
+  "email": "user@example.com",
+  "username": "john_doe"
+}
+```
+
+JWT
+
+```mermaid
+graph LR
+api/v1/auth/token-->POST-->JWT-token;
+```
+
+```json
+{
+  "username": "john_doe",
+  "confirmation_code": "blyxv3-48b382b52eb0d5885cd281ca10a85839"
+}
+```
 
 ## ЛИЦЕНЗИЯ
 
