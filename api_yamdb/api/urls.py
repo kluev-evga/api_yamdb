@@ -4,6 +4,8 @@ from api.views import (
     GenresViewSet,
     SignupView,
     UsersViewSet
+    CommentsViewSet,
+    ReviewsViewSet,
 )
 
 from django.urls import include, path
@@ -14,6 +16,10 @@ router = routers.DefaultRouter()
 router.register('users', UsersViewSet, basename='users')
 router.register('categories', CategoriesViewSet, basename='categories')
 router.register('genres', GenresViewSet, basename='genres')
+router.register(r'titles/(?P<title_id>\d+)/reviews',
+                ReviewsViewSet, basename='reviews')
+router.register(r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)'
+                r'/comments', CommentsViewSet, basename='comments')
 
 urlpatterns = [
     path('api/v1/auth/signup/', SignupView.as_view(), name='signup'),
