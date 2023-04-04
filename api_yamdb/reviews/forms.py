@@ -3,7 +3,6 @@ from django import forms
 from reviews.models import (
     Categories,
     Comments,
-    GenreTitle,
     Genres,
     Reviews,
     Titles,
@@ -29,12 +28,6 @@ class GenresForm(forms.ModelForm):
         fields = '__all__'
 
 
-class GenreTitleForm(forms.ModelForm):
-    class Meta:
-        model = GenreTitle
-        fields = '__all__'
-
-
 class ReviewsForm(forms.ModelForm):
     class Meta:
         model = Reviews
@@ -44,7 +37,9 @@ class ReviewsForm(forms.ModelForm):
 class TitlesForm(forms.ModelForm):
     class Meta:
         model = Titles
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'year', 'description', 'category'
+        ]
 
 
 class UserForm(forms.ModelForm):
