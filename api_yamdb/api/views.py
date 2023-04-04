@@ -1,11 +1,18 @@
-from api.permissions import IsOwnerOrIsAdmin
+from api.permissions import (
+    AdminModeratorOwnerOrReadOnly,
+    IsOwnerOrIsAdmin,
+    AnyAuthorized,
+    IsAdminUser,
+)
 from api.serializers import (
     CategoriesSerializer,
+    UserPatchSerializer,
     CommentsSerializer,
     ReviewsSerializer,
     GenresSerializer,
     SignupSerializer,
     AuthSerializer,
+    UserSerializer,
 )
 
 from django.contrib.auth.tokens import default_token_generator
@@ -13,13 +20,11 @@ from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
 
 from rest_framework import filters, mixins, status, viewsets
-from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from reviews.models import Categories, Comments, Genres, Reviews, Titles, User
-from .permissions import AdminModeratorOwnerOrReadOnly
 
 
 class GetListCreateDeleteViewSet(
@@ -31,23 +36,22 @@ class GetListCreateDeleteViewSet(
 
 class SignupView(APIView):
     def send_confirmation_email(self, username, email):
-        """File mailer - сохранить email в sent_mails"""
+        """File mailer - save email into sent_mails"""
         user = User.objects.get(username=username, email=email)
         confirmation_code = default_token_generator.make_token(user)
 
         subject = 'Код для получения токена'
         body = (f'{"-" * 79}\n\nusername:\n{username}\n\n'
                 f'Код подтверждения:\n{confirmation_code}\n')
+        mail_from = 'from@example.com'
+        mail_to = [email, ]
+
         send_mail(
-            subject,
-            body,
-            'from@example.com',
-            ['to@example.com'],
-            fail_silently=False,
+            subject, body, mail_from, mail_to, fail_silently=False
         )
 
     def post(self, request):
-        """Регистрация пользователя / получение confirmation code"""
+        """Register new user / get confirmation code"""
         username = request.data.get('username', None)
         email = request.data.get('email', None)
 
@@ -89,10 +93,6 @@ class GenresViewSet(GetListCreateDeleteViewSet):
     lookup_field = 'slug'
 
 
-class UsersViewSet(ModelViewSet):
-    pass
-
-
 class ReviewsViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewsSerializer
     permission_classes = [AdminModeratorOwnerOrReadOnly]
@@ -123,3 +123,42 @@ class CommentsViewSet(viewsets.ModelViewSet):
             Reviews,
             id=self.kwargs.get('review_id'))
         serializer.save(author=self.request.user, review=review)
+
+
+class UsersViewSet(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (IsAdminUser,)
+    lookup_url_kwarg = 'slug'
+    http_method_names = [
+        'get', 'post', 'patch', 'delete', 'head', 'options', 'trace'
+    ]
+
+    def get_object(self):
+        """slug == me --> self | slug == username --> user"""
+        queryset = User.objects.all()
+        slug = self.kwargs['slug']
+
+        username = self.request.user.username if slug == 'me' else slug
+        obj = get_object_or_404(queryset, username=username)
+
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+
+class UsersMeView(APIView):
+    permission_classes = (AnyAuthorized,)
+
+    def get(self, request, *args, **kwargs):
+        queryset = User.objects.all()
+        user = get_object_or_404(queryset, username=request.user.username)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+    def patch(self, request, *args, **kwargs):
+        queryset = User.objects.all()
+        user = get_object_or_404(queryset, username=request.user.username)
+        serializer = UserPatchSerializer(user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)

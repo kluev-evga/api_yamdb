@@ -12,7 +12,6 @@ from reviews.forms import (
     UserForm
 )
 
-
 FILENAME_MODEL_DICT = {
     'users.csv': UserForm,
     'category.csv': CategoriesForm,
@@ -84,7 +83,7 @@ class Command(BaseCommand):
         self.stderr.write(f'{form.errors.as_data()}\n')
 
     def _import_csv(self):
-        with open(self.file_path, mode='r') as file:
+        with open(self.file_path, mode='r', encoding="utf-8") as file:
             reader = csv.DictReader(file)
             for row in reader:
                 form = self._save_row_to_database(row=row)

@@ -11,7 +11,7 @@ JWT = TokenObtainPairSerializer()
 
 
 class AuthSerializer(serializers.Serializer):
-    """Serializer для получения токена"""
+    """Get JWT token, auth/token serializer"""
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
 
@@ -20,7 +20,7 @@ class AuthSerializer(serializers.Serializer):
         fields = ('username', 'confirmation_code')
 
     def to_representation(self, user):
-        """Вернуть токен если success"""
+        """POST response view, return JWT token"""
         token = str(JWT.get_token(user).access_token)
         return {'token': token}
 
@@ -40,8 +40,7 @@ class AuthSerializer(serializers.Serializer):
 
 
 class SignupSerializer(serializers.ModelSerializer):
-    """Serializer для регистрации"""
-
+    """auth/signup serializer"""
     class Meta:
         model = User
         fields = ('username', 'email',)
@@ -61,7 +60,7 @@ class ReviewsSerializer(serializers.ModelSerializer):
     def validate_score(self, value):
         if 0 > value > 10:
             raise serializers.ValidationError('10-бальная шкала оценки.')
-        return
+        return value
 
     def validate(self, data):
         request = self.context['request']
@@ -106,3 +105,19 @@ class GenresSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genres
         fields = ('name', 'slug',)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """users/* serializer"""
+    class Meta:
+        model = User
+        fields = (
+            'username', 'email', 'first_name', 'last_name', 'bio', 'role',
+        )
+
+
+class UserPatchSerializer(serializers.ModelSerializer):
+    """users/me PATCH serializer"""
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name', 'bio',)
