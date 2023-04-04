@@ -127,25 +127,16 @@ class TitlesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Titles
-        fields = ('name', 'year', 'rating', 'description', 'genre', 'category')
+        fields = ('id', 'name', 'year', 'rating', 'description', 'genre', 'category')
         read_only_fields = ('rating',)
 
-    def validate(self, data):
-        if data.get('year') > datetime.today().year:
+    def validate_year(self, data):
+        print(data)
+        print(data)
+        print(data)
+        if data > datetime.today().year:
             raise serializers.ValidationError('Year must be equal or less than current year')
-        category_slug = self.initial_data.get('category')
-        if not Categories.objects.filter(slug=category_slug).exists():
-            raise serializers.ValidationError(f'Mentioned category {category_slug} does not exist.')
-        genre_slugs = self.initial_data.get('genre')
-        for slug in genre_slugs:
-            if not Genres.objects.filter(slug=slug).exists():
-                raise serializers.ValidationError(f'Mentioned genre {slug} does not exist.')
         return data
-
-    def create(self, validated_data):
-        genres = self.initial_data.get('genre')
-        title = Titles.objects.create(**validated_data)
-        return title
 
     def get_rating(self, obj):
         if not Reviews.objects.filter(title=obj).exists():
