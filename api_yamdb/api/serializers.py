@@ -36,7 +36,7 @@ class AuthSerializer(serializers.Serializer):
                 'Некорректный код подтверждения и/или username'
             )
 
-        return user  # вернул user чтобы получить его в to_representation()
+        return user  # -> to_representation()
 
 
 class SignupSerializer(serializers.ModelSerializer):
