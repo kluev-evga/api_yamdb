@@ -5,7 +5,9 @@ from rest_framework import serializers
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from reviews.models import Titles, Comments, Reviews, Categories, Genres, User
+from reviews.models import Categories, Comments, Genres, GenreTitle, Reviews, Titles, User
+
+from datetime import datetime
 
 JWT = TokenObtainPairSerializer()
 
@@ -97,7 +99,58 @@ class CategoriesSerializer(serializers.ModelSerializer):
     """Serializer for Categories endpoint"""
     class Meta:
         model = Categories
-        fields = ('name', 'slug',)
+        fields = ('name', 'slug')
+
+
+class SlugDictRelatedField(serializers.SlugRelatedField):
+
+    def to_representation(self, obj):
+        return {
+            'name': obj.name,
+            'slug': obj.slug,
+        }
+
+
+class TitlesSerializer(serializers.ModelSerializer):
+    """Serializer for Titles endpoint"""
+    category = SlugDictRelatedField(
+        slug_field='slug',
+        queryset=Categories.objects.all()
+    )
+    genre = SlugDictRelatedField(
+        slug_field='slug',
+        queryset=Genres.objects.all(),
+        many=True
+    )
+    rating = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Titles
+        fields = ('name', 'year', 'rating', 'description', 'genre', 'category')
+        read_only_fields = ('rating', 'category', 'genre')
+
+    def validate_year(self, value):
+        if value > datetime.now().year:
+            raise serializers.ValidationError('Year must be equal or less than current year')
+        return value
+
+    def create(self, validated_data):
+        genres = self.initial_data.get('genre')
+        try:
+            current_category = Categories.objects.get(slug=self.initial_data.get('category'))
+        except Genres.DoesNotExist:
+            raise serializers.ValidationError(f'Mentioned category does not exist.')
+        validated_data.update({'category': current_category})
+        title = None  # TODO Доделать логику поста
+        for genre in genres:
+            try:
+                current_genre = Genres.objects.get(slug=genre)
+            except Genres.DoesNotExist:
+                raise serializers.ValidationError(f'Mentioned genre {genre} does not exist.')
+            GenreTitle.objects.create(
+                genre=genre.id, title=title.id
+            )
+        return title
 
 
 class GenresSerializer(serializers.ModelSerializer):

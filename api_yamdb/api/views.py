@@ -11,6 +11,7 @@ from api.serializers import (
     ReviewsSerializer,
     GenresSerializer,
     SignupSerializer,
+    TitlesSerializer,
     AuthSerializer,
     UserSerializer,
 )
@@ -18,6 +19,8 @@ from api.serializers import (
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
+
+from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.response import Response
@@ -78,6 +81,7 @@ class AuthView(APIView):
 
 
 class CategoriesViewSet(GetListCreateDeleteViewSet):
+    """ViewSet for Categories endpoint"""
     serializer_class = CategoriesSerializer
     queryset = Categories.objects.all()
     permission_classes = (IsOwnerOrIsAdmin,)
@@ -93,6 +97,15 @@ class GenresViewSet(GetListCreateDeleteViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
+
+
+class TitlesViewSet(ModelViewSet):
+    """ViewSet for Titles endpoint"""
+    serializer_class = TitlesSerializer
+    queryset = Titles.objects.all()
+    permission_classes = (IsOwnerOrIsAdmin,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('category', 'genre', 'name', 'year')
 
 
 class ReviewsViewSet(viewsets.ModelViewSet):
