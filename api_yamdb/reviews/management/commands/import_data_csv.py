@@ -5,7 +5,6 @@ from django.core.management.base import BaseCommand
 from reviews.forms import (
     CategoriesForm,
     CommentsForm,
-    GenreTitleForm,
     GenresForm,
     ReviewsForm,
     TitlesForm,
@@ -17,7 +16,6 @@ FILENAME_MODEL_DICT = {
     'category.csv': CategoriesForm,
     'genre.csv': GenresForm,
     'titles.csv': TitlesForm,
-    'genre_title.csv': GenreTitleForm,
     'review.csv': ReviewsForm,
     'comments.csv': CommentsForm,
 }

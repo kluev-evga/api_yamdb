@@ -151,6 +151,28 @@ dbdocs build graph-db.dbml
 
 Последний шаг выведет в консоль ссылку на задеплоенный проект.
 
+## Добавление данных из csv файлов
+
+Команда для добавления данных из csv
+
+_перейти в папку с проектом_
+
+```shell
+cd api_yamdb
+````
+
+_добавить все файлы из папки api_yamdb/static/data_
+
+```shell
+python3 manage.py import_data_csv
+```
+
+_добавить отдельный файл:_
+
+```shell
+python3 manage.py import_data_csv —[file name].csv
+```
+
 ## Регистрация и авторизация
 
 ```mermaid
