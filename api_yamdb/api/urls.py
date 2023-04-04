@@ -7,6 +7,7 @@ from api.views import (
     UsersViewSet,
     CommentsViewSet,
     ReviewsViewSet,
+    UsersMeView,
 )
 
 from django.urls import include, path
@@ -27,5 +28,6 @@ router.register(r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)'
 urlpatterns = [
     path('api/v1/auth/signup/', SignupView.as_view(), name='signup'),
     path('api/v1/auth/token/', AuthView.as_view(), name='auth'),
+    path('api/v1/users/me/', UsersMeView.as_view(), name='users-self'),
     path('api/v1/', include(router.urls)),
 ]
