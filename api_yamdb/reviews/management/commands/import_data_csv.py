@@ -1,4 +1,6 @@
 import csv
+import sqlite3
+import sys
 
 from django.core.management.base import BaseCommand
 
@@ -40,10 +42,6 @@ class Command(BaseCommand):
         parser.add_argument('--genre.csv',
                             action='store_true',
                             help='Import genre.csv file in database '
-                                 'if it contains valid ids and data')
-        parser.add_argument('--genre_title.csv',
-                            action='store_true',
-                            help='Import genre_title.csv file in database '
                                  'if it contains valid ids and data')
         parser.add_argument('--review.csv',
                             action='store_true',
@@ -88,6 +86,23 @@ class Command(BaseCommand):
                 if form.errors:
                     self._stdout_error(form=form, row=row)
 
+    def _import_genre_title_data(self):
+        conn = sqlite3.connect('db.sqlite3')
+        cur = conn.cursor()
+        with open(DATA_PATH + 'genre_title.csv', 'r', newline='') as f:
+            reader = csv.reader(f, delimiter=',')
+            try:
+                for row in reader:
+                    if reader.line_num == 1:
+                        continue
+                    else:
+                        cur.execute(f'INSERT INTO reviews_titles_genre VALUES (?,?,?)', row)
+                        self.imported_counter += 1
+            except csv.Error as err:
+                sys.exit(f'genre_title.csv, line {reader.line_num}: {err}')
+        conn.commit()
+        conn.close()
+
     def prepare(self):
         self.imported_counter = 0
         self.skipped_counter = 0
@@ -115,3 +130,8 @@ class Command(BaseCommand):
                 self.file_path = DATA_PATH + self.filename
                 self.main()
                 self.finalise()
+            self.stdout.write(f'{"_" * 120}\nStarting import {self.filename}')
+            self.prepare()
+            self.filename = 'genre_title.csv'
+            self._import_genre_title_data()
+            self.finalise()
