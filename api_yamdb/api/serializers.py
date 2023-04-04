@@ -128,21 +128,20 @@ class TitlesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Titles
-        fields = (
-            'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
-        )
+        fields = ('id', 'name', 'year', 'rating', 'description', 'genre', 'category')
         read_only_fields = ('rating',)
 
     def validate_year(self, data):
+        print(data)
+        print(data)
+        print(data)
         if data > datetime.today().year:
-            raise serializers.ValidationError(
-                'Year must be equal or less than current year'
-            )
+            raise serializers.ValidationError('Year must be equal or less than current year')
         return data
 
     def get_rating(self, obj):
         if not Reviews.objects.filter(title=obj).exists():
-            return None
+            return 'None'
         return obj.reviews.aggregate(Avg('score'))['score__avg']
 
 

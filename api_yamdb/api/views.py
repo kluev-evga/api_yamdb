@@ -31,7 +31,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
-from reviews.models import Categories, Comments, Genres, Reviews, Titles, User
+from reviews.models import Categories, Comments, Genres, Review, Title, User
 
 
 class GetListCreateDeleteViewSet(
@@ -115,7 +115,7 @@ class TitleFilter(FilterSet):
 class TitlesViewSet(ModelViewSet):
     """ViewSet for Titles endpoint"""
     serializer_class = TitlesSerializer
-    queryset = Titles.objects.all()
+    queryset = Title.objects.all()
     permission_classes = (IsOwnerOrIsAdmin,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
@@ -126,29 +126,29 @@ class ReviewsViewSet(viewsets.ModelViewSet):
     permission_classes = (AdminModeratorOwnerOrReadOnly,)
 
     def get_queryset(self):
-        title = get_object_or_404(Titles, pk=self.kwargs.get("title_id"))
+        title = get_object_or_404(Title, pk=self.kwargs.get("title_id"))
 
         return title.reviews.all()
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
-        title = get_object_or_404(Titles, id=title_id)
+        title = get_object_or_404(Title, id=title_id)
         serializer.save(author=self.request.user, title=title)
 
 
 class CommentsViewSet(viewsets.ModelViewSet):
     serializer_class = CommentsSerializer
-    permission_classes = (AdminModeratorOwnerOrReadOnly,)
+    permission_classes = (AdminModeratorOwnerOrReadOnly, )
 
     def get_queryset(self):
         review = get_object_or_404(
-            Reviews,
+            Review,
             id=self.kwargs.get('review_id'))
         return review.comments.all()
 
     def perform_create(self, serializer):
         review = get_object_or_404(
-            Reviews,
+            Review,
             id=self.kwargs.get('review_id'))
         serializer.save(author=self.request.user, review=review)
 
