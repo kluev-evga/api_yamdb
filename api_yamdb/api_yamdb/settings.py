@@ -90,7 +90,7 @@ AUTH_USER_MODEL = 'reviews.User'
 # rest_framework
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'api.pagination.CursorCountPagination',
-    'PAGE_SIZE': 2,
+    'PAGE_SIZE': 10,
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
@@ -102,7 +102,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_FILTER_BACKENDS': [
         'rest_framework.filters.SearchFilter'
-    ]
+    ],
 }
 
 # File mailer

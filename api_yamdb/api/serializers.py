@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from reviews.models import Categories, Comments, Genres, Reviews, Titles, User
+from reviews.models import Categories, Comments, Genres, Review, Title, User
 
 from datetime import datetime
 
@@ -69,15 +69,15 @@ class ReviewsSerializer(serializers.ModelSerializer):
         request = self.context['request']
         author = request.user
         title_id = self.context['view'].kwargs.get('title_id')
-        title = get_object_or_404(Titles, pk=title_id)
+        title = get_object_or_404(Title, pk=title_id)
         if request.method == 'POST':
-            if Reviews.objects.filter(title=title, author=author).exists():
+            if Review.objects.filter(title=title, author=author).exists():
                 raise serializers.ValidationError('Не более одного отзыва'
                                                   'на пользователя')
         return data
 
     class Meta:
-        model = Reviews
+        model = Review
         fields = '__all__'
 
 
@@ -126,7 +126,7 @@ class TitlesSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField()
 
     class Meta:
-        model = Titles
+        model = Title
         fields = ('id', 'name', 'year', 'rating', 'description', 'genre', 'category')
         read_only_fields = ('rating',)
 
@@ -139,7 +139,7 @@ class TitlesSerializer(serializers.ModelSerializer):
         return data
 
     def get_rating(self, obj):
-        if not Reviews.objects.filter(title=obj).exists():
+        if not Review.objects.filter(title=obj).exists():
             return 'None'
         return obj.reviews.aggregate(Avg('score'))['score__avg']
 

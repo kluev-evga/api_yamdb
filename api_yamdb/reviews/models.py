@@ -41,7 +41,7 @@ class Genres(models.Model):
         return self.slug
 
 
-class Titles(models.Model):
+class Title(models.Model):
     name = models.CharField(
         'Название произведения',
         max_length=256,
@@ -133,9 +133,9 @@ SCORE = [
 ]
 
 
-class Reviews(models.Model):
+class Review(models.Model):
     title = models.ForeignKey(
-        Titles,
+        Title,
         verbose_name='Произведение',
         on_delete=models.CASCADE,
         related_name='reviews'
@@ -176,7 +176,7 @@ class Reviews(models.Model):
 
 class Comments(models.Model):
     review = models.ForeignKey(
-        Reviews,
+        Review,
         verbose_name='Отзыв',
         on_delete=models.CASCADE,
         related_name='comments'
