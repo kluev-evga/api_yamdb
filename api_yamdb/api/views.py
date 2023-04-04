@@ -35,10 +35,14 @@ class GetListCreateDeleteViewSet(
 
 
 class SignupView(APIView):
+    @staticmethod
+    def get_confirmation_code(username, email):
+        user = User.objects.get(username=username, email=email)
+        return default_token_generator.make_token(user)
+
     def send_confirmation_email(self, username, email):
         """File mailer - save email into sent_mails"""
-        user = User.objects.get(username=username, email=email)
-        confirmation_code = default_token_generator.make_token(user)
+        confirmation_code = self.get_confirmation_code(username, email)
 
         subject = 'Код для получения токена'
         body = (f'{"-" * 79}\n\nusername:\n{username}\n\n'
@@ -46,9 +50,7 @@ class SignupView(APIView):
         mail_from = 'from@example.com'
         mail_to = [email, ]
 
-        send_mail(
-            subject, body, mail_from, mail_to, fail_silently=False
-        )
+        send_mail(subject, body, mail_from, mail_to, fail_silently=False)
 
     def post(self, request):
         """Register new user / get confirmation code"""
@@ -129,21 +131,11 @@ class UsersViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAdminUser,)
-    lookup_url_kwarg = 'slug'
+    lookup_field = "username"
+    search_fields = ('username',)
     http_method_names = [
         'get', 'post', 'patch', 'delete', 'head', 'options', 'trace'
     ]
-
-    def get_object(self):
-        """slug == me --> self | slug == username --> user"""
-        queryset = User.objects.all()
-        slug = self.kwargs['slug']
-
-        username = self.request.user.username if slug == 'me' else slug
-        obj = get_object_or_404(queryset, username=username)
-
-        self.check_object_permissions(self.request, obj)
-        return obj
 
 
 class UsersMeView(APIView):
