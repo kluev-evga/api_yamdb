@@ -31,7 +31,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
-from reviews.models import Categories, Comments, Genres, Review, Title, User
+from reviews.models import Categories, Genres, Review, Title, User
 
 
 class GetListCreateDeleteViewSet(
@@ -108,7 +108,7 @@ class TitleFilter(FilterSet):
     genre = CharFilter(field_name='genre__slug')
 
     class Meta:
-        model = Titles
+        model = Title
         fields = ('name', 'year', 'category', 'genre')
 
 

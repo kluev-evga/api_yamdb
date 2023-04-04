@@ -8,7 +8,7 @@ from rest_framework import serializers
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from reviews.models import Categories, Comments, Genres, Reviews, Titles, User
+from reviews.models import Categories, Comments, Genres, Review, Title, User
 
 
 JWT = TokenObtainPairSerializer()
@@ -70,15 +70,15 @@ class ReviewsSerializer(serializers.ModelSerializer):
         request = self.context['request']
         author = request.user
         title_id = self.context['view'].kwargs.get('title_id')
-        title = get_object_or_404(Titles, pk=title_id)
+        title = get_object_or_404(Title, pk=title_id)
         if request.method == 'POST':
-            if Reviews.objects.filter(title=title, author=author).exists():
+            if Review.objects.filter(title=title, author=author).exists():
                 raise serializers.ValidationError('Не более одного отзыва'
                                                   'на пользователя')
         return data
 
     class Meta:
-        model = Reviews
+        model = Review
         fields = '__all__'
 
 
@@ -127,8 +127,10 @@ class TitlesSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField()
 
     class Meta:
-        model = Titles
-        fields = ('id', 'name', 'year', 'rating', 'description', 'genre', 'category')
+        model = Title
+        fields = (
+            'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
+        )
         read_only_fields = ('rating',)
 
     def validate_year(self, data):
@@ -136,12 +138,14 @@ class TitlesSerializer(serializers.ModelSerializer):
         print(data)
         print(data)
         if data > datetime.today().year:
-            raise serializers.ValidationError('Year must be equal or less than current year')
+            raise serializers.ValidationError(
+                'Year must be equal or less than current year'
+            )
         return data
 
     def get_rating(self, obj):
-        if not Reviews.objects.filter(title=obj).exists():
-            return 'None'
+        if not Review.objects.filter(title=obj).exists():
+            return None
         return obj.reviews.aggregate(Avg('score'))['score__avg']
 
 

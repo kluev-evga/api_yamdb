@@ -97,7 +97,7 @@ class Command(BaseCommand):
                         continue
                     else:
                         cur.execute(
-                            'INSERT INTO reviews_titles_genre VALUES (?,?,?)',
+                            'INSERT INTO reviews_title_genre VALUES (?,?,?)',
                             row
                         )
                         self.imported_counter += 1

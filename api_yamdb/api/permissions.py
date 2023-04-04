@@ -19,10 +19,11 @@ class AdminModeratorOwnerOrReadOnly(BasePermission):
         return (request.method in SAFE_METHODS
                 or request.user.is_authenticated
                 and (
-                        request.user.is_superuser
-                        or request.user.role == 'admin'
-                        or request.user.role == 'moderator'
-                        or obj.author_id == request.user.pk))
+                    request.user.is_superuser
+                    or request.user.role == 'admin'
+                    or request.user.role == 'moderator'
+                    or obj.author_id == request.user.pk
+                ))
 
 
 class IsAdminUser(BasePermission):
