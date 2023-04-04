@@ -43,13 +43,11 @@ class SignupView(APIView):
         subject = 'Код для получения токена'
         body = (f'{"-" * 79}\n\nusername:\n{username}\n\n'
                 f'Код подтверждения:\n{confirmation_code}\n')
+        mail_from = 'from@example.com'
         mail_to = [email, ]
+
         send_mail(
-            subject,
-            body,
-            'from@example.com',
-            mail_to,
-            fail_silently=False,
+            subject, body, mail_from, mail_to, fail_silently=False
         )
 
     def post(self, request):

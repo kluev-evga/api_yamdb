@@ -45,4 +45,3 @@ class AnyAuthorized(BasePermission):
              request.user.role == 'admin' or
              request.user.role == 'moderator')
         )
-
