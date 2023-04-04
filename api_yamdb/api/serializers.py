@@ -1,5 +1,7 @@
-from django.db.models import Avg
+from datetime import datetime
+
 from django.contrib.auth.tokens import default_token_generator
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
@@ -8,7 +10,6 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from reviews.models import Categories, Comments, Genres, Reviews, Titles, User
 
-from datetime import datetime
 
 JWT = TokenObtainPairSerializer()
 
@@ -127,20 +128,21 @@ class TitlesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Titles
-        fields = ('id', 'name', 'year', 'rating', 'description', 'genre', 'category')
+        fields = (
+            'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
+        )
         read_only_fields = ('rating',)
 
     def validate_year(self, data):
-        print(data)
-        print(data)
-        print(data)
         if data > datetime.today().year:
-            raise serializers.ValidationError('Year must be equal or less than current year')
+            raise serializers.ValidationError(
+                'Year must be equal or less than current year'
+            )
         return data
 
     def get_rating(self, obj):
         if not Reviews.objects.filter(title=obj).exists():
-            return 'None'
+            return None
         return obj.reviews.aggregate(Avg('score'))['score__avg']
 
 

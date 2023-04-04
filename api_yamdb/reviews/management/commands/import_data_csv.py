@@ -96,7 +96,10 @@ class Command(BaseCommand):
                     if reader.line_num == 1:
                         continue
                     else:
-                        cur.execute(f'INSERT INTO reviews_titles_genre VALUES (?,?,?)', row)
+                        cur.execute(
+                            'INSERT INTO reviews_titles_genre VALUES (?,?,?)',
+                            row
+                        )
                         self.imported_counter += 1
             except csv.Error as err:
                 sys.exit(f'genre_title.csv, line {reader.line_num}: {err}')

@@ -10,7 +10,6 @@ class IsOwnerOrIsAdmin(BasePermission):
         )
 
 
-
 class AdminModeratorOwnerOrReadOnly(BasePermission):
     def has_object_permission(self, request, view, obj):
         return (request.method in SAFE_METHODS

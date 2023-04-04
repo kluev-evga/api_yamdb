@@ -1,26 +1,30 @@
 from api.permissions import (
     AdminModeratorOwnerOrReadOnly,
-    IsOwnerOrIsAdmin,
     AnyAuthorized,
     IsAdminUser,
+    IsOwnerOrIsAdmin,
 )
 from api.serializers import (
+    AuthSerializer,
     CategoriesSerializer,
-    UserPatchSerializer,
     CommentsSerializer,
-    ReviewsSerializer,
     GenresSerializer,
+    ReviewsSerializer,
     SignupSerializer,
     TitlesSerializer,
-    AuthSerializer,
+    UserPatchSerializer,
     UserSerializer,
 )
 
 from django.contrib.auth.tokens import default_token_generator
-from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
 
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework import (
+    CharFilter,
+    DjangoFilterBackend,
+    FilterSet,
+)
 
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.response import Response
@@ -99,18 +103,27 @@ class GenresViewSet(GetListCreateDeleteViewSet):
     lookup_field = 'slug'
 
 
+class TitleFilter(FilterSet):
+    category = CharFilter(field_name='category__slug')
+    genre = CharFilter(field_name='genre__slug')
+
+    class Meta:
+        model = Titles
+        fields = ('name', 'year', 'category', 'genre')
+
+
 class TitlesViewSet(ModelViewSet):
     """ViewSet for Titles endpoint"""
     serializer_class = TitlesSerializer
     queryset = Titles.objects.all()
     permission_classes = (IsOwnerOrIsAdmin,)
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('category', 'genre', 'name', 'year')
+    filterset_class = TitleFilter
 
 
 class ReviewsViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewsSerializer
-    permission_classes = [AdminModeratorOwnerOrReadOnly]
+    permission_classes = (AdminModeratorOwnerOrReadOnly,)
 
     def get_queryset(self):
         title = get_object_or_404(Titles, pk=self.kwargs.get("title_id"))
