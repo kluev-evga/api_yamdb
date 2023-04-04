@@ -4,8 +4,8 @@ from reviews.models import (
     Categories,
     Comments,
     Genres,
-    Reviews,
-    Titles,
+    Review,
+    Title,
     User
 )
 
@@ -30,13 +30,13 @@ class GenresForm(forms.ModelForm):
 
 class ReviewsForm(forms.ModelForm):
     class Meta:
-        model = Reviews
+        model = Review
         fields = '__all__'
 
 
 class TitlesForm(forms.ModelForm):
     class Meta:
-        model = Titles
+        model = Title
         fields = [
             'id', 'name', 'year', 'description', 'category'
         ]

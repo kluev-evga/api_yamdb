@@ -1,13 +1,13 @@
 from api.views import (
     AuthView,
     CategoriesViewSet,
+    CommentsViewSet,
     GenresViewSet,
+    ReviewsViewSet,
     SignupView,
     TitlesViewSet,
-    UsersViewSet,
-    CommentsViewSet,
-    ReviewsViewSet,
     UsersMeView,
+    UsersViewSet,
 )
 
 from django.urls import include, path
