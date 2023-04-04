@@ -116,7 +116,7 @@ class TitlesSerializer(serializers.ModelSerializer):
     """Serializer for Titles endpoint"""
     category = SlugDictRelatedField(
         slug_field='slug',
-        queryset=Categories.objects.all()
+        queryset=Categories.objects.all(),
     )
     genre = SlugDictRelatedField(
         slug_field='slug',
@@ -136,8 +136,8 @@ class TitlesSerializer(serializers.ModelSerializer):
         category_slug = self.initial_data.get('category')
         if not Categories.objects.filter(slug=category_slug).exists():
             raise serializers.ValidationError(f'Mentioned category {category_slug} does not exist.')
-        genre_slug = self.initial_data.get('genre')
-        for slug in genre_slug:
+        genre_slugs = self.initial_data.get('genre')
+        for slug in genre_slugs:
             if not Genres.objects.filter(slug=slug).exists():
                 raise serializers.ValidationError(f'Mentioned genre {slug} does not exist.')
         return data
