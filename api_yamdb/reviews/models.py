@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -44,6 +46,13 @@ class Genres(models.Model):
         return self.slug
 
 
+def validate_year(value):
+    if value > datetime.today().year:
+        raise ValidationError(
+            'Year must be equal or less than current year'
+        )
+
+
 class Title(models.Model):
     name = models.CharField(
         verbose_name='Название произведения',
@@ -51,6 +60,8 @@ class Title(models.Model):
     )
     year = models.PositiveSmallIntegerField(
         verbose_name='Год выпуска',
+        validators=[validate_year],
+        db_index=True,
     )
     description = models.TextField(
         verbose_name='Описание',
