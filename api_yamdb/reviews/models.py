@@ -8,10 +8,11 @@ from django.utils.translation import gettext_lazy
 
 class Categories(models.Model):
     name = models.CharField(
-        'Имя категории',
+        verbose_name='Имя категории',
         max_length=256,
     )
     slug = models.SlugField(
+        verbose_name='Slug',
         unique=True,
         max_length=50,
     )
@@ -26,10 +27,11 @@ class Categories(models.Model):
 
 class Genres(models.Model):
     name = models.CharField(
-        'Название жанра',
+        verbose_name='Название жанра',
         max_length=256,
     )
     slug = models.SlugField(
+        verbose_name='Slug',
         unique=True,
         max_length=50,
     )
@@ -44,14 +46,14 @@ class Genres(models.Model):
 
 class Title(models.Model):
     name = models.CharField(
-        'Название произведения',
+        verbose_name='Название произведения',
         max_length=256,
     )
     year = models.PositiveSmallIntegerField(
-        'Год выпуска',
+        verbose_name='Год выпуска',
     )
     description = models.TextField(
-        'Описание',
+        verbose_name='Описание',
         blank=True,
         null=True,
     )
@@ -64,6 +66,7 @@ class Title(models.Model):
     genre = models.ManyToManyField(
         Genres,
         related_name='titles',
+        verbose_name='Жанр',
     )
 
     class Meta:
@@ -88,7 +91,7 @@ def validate_username(value):
 
 class User(AbstractUser):
     username = models.CharField(
-        'username',
+        verbose_name='username',
         max_length=150,
         unique=True,
         help_text=gettext_lazy('Required. 150 characters or fewer.'
@@ -100,16 +103,16 @@ class User(AbstractUser):
         },
     )
     email = models.EmailField(
-        'Email',
+        verbose_name='Email',
         unique=True,
     )
     bio = models.TextField(
-        'биография',
+        verbose_name='биография',
         blank=True,
         null=True,
     )
     role = models.CharField(
-        'роль пользователя',
+        verbose_name='роль пользователя',
         max_length=50,
         choices=ROLES,
         default='user'
