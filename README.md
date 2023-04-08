@@ -11,6 +11,8 @@
 Проект реализует REST API backend сервис на базе встроенной в Python sqlite базы данных и DjangoResetFramework. В
 проекте подключена авторизация по JWT токенам.
 
+Stack проекта: Django, Django-rest-framework, simpleJWT, sqlite
+
 ### Команда разработки:
 
 <a href='https://github.com/Siktorovich' title='Артём'>
@@ -32,7 +34,7 @@
 _Клонировать проект_
 
 ```shell
-git clone https://github.com/kluevEVGA/api_yamdb.git
+git clone https://github.com/kluev-evga/api_yamdb.git
 ```
 
 _Установить локальное окружение_
@@ -84,7 +86,7 @@ python3 manage.py runserver
 _Клонировать проект_
 
 ```shell
-git clone https://github.com/kluevEVGA/api_yamdb.git
+git clone https://github.com/kluev-evga/api_yamdb.git
 ```
 
 _Установить локальное окружение_
@@ -207,4 +209,4 @@ api/v1/auth/token-->POST-->JWT-token;
 ## ЛИЦЕНЗИЯ
 
 Распространяется по `MIT` лицензии. Для дополнительной информации
-смотри: [LICENSE](https://github.com/kluevEVGA/api_yamdb/blob/master/LICENSE)
+смотри: [LICENSE](https://github.com/kluev-evga/api_yamdb/blob/master/LICENSE)

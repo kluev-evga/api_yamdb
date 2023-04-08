@@ -1,16 +1,20 @@
+from datetime import datetime
+
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy
 
 
 class Categories(models.Model):
     name = models.CharField(
-        'Имя категории',
+        verbose_name='Имя категории',
         max_length=256,
     )
     slug = models.SlugField(
+        verbose_name='Slug',
         unique=True,
         max_length=50,
     )
@@ -25,10 +29,11 @@ class Categories(models.Model):
 
 class Genres(models.Model):
     name = models.CharField(
-        'Название жанра',
+        verbose_name='Название жанра',
         max_length=256,
     )
     slug = models.SlugField(
+        verbose_name='Slug',
         unique=True,
         max_length=50,
     )
@@ -41,16 +46,25 @@ class Genres(models.Model):
         return self.slug
 
 
+def validate_year(value):
+    if value > datetime.today().year:
+        raise ValidationError(
+            'Year must be equal or less than current year'
+        )
+
+
 class Title(models.Model):
     name = models.CharField(
-        'Название произведения',
+        verbose_name='Название произведения',
         max_length=256,
     )
     year = models.PositiveSmallIntegerField(
-        'Год выпуска',
+        verbose_name='Год выпуска',
+        validators=[validate_year],
+        db_index=True,
     )
     description = models.TextField(
-        'Описание',
+        verbose_name='Описание',
         blank=True,
         null=True,
     )
@@ -63,6 +77,7 @@ class Title(models.Model):
     genre = models.ManyToManyField(
         Genres,
         related_name='titles',
+        verbose_name='Жанр',
     )
 
     class Meta:
@@ -87,7 +102,7 @@ def validate_username(value):
 
 class User(AbstractUser):
     username = models.CharField(
-        'username',
+        verbose_name='username',
         max_length=150,
         unique=True,
         help_text=gettext_lazy('Required. 150 characters or fewer.'
@@ -99,16 +114,16 @@ class User(AbstractUser):
         },
     )
     email = models.EmailField(
-        'Email',
+        verbose_name='Email',
         unique=True,
     )
     bio = models.TextField(
-        'биография',
+        verbose_name='биография',
         blank=True,
         null=True,
     )
     role = models.CharField(
-        'роль пользователя',
+        verbose_name='роль пользователя',
         max_length=50,
         choices=ROLES,
         default='user'
@@ -124,13 +139,6 @@ class User(AbstractUser):
         if self.is_superuser:
             self.role = 'admin'
         super().save(*args, **kwargs)
-
-
-SCORE = [
-    (1, '1'), (2, '2'), (3, '3'),
-    (4, '4'), (5, '5'), (6, '6'),
-    (7, '7'), (8, '8'), (9, '9'), (10, '10')
-]
 
 
 class Review(models.Model):
@@ -151,7 +159,10 @@ class Review(models.Model):
     )
     score = models.PositiveSmallIntegerField(
         verbose_name='Рейтинг',
-        choices=SCORE
+        validators=[
+            MinValueValidator(1, 'Допустима оценка от 1 до 10'),
+            MaxValueValidator(10, 'Допустима оценка от 1 до 10')
+        ]
     )
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
